@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = "Mi Panel";
+}
+
+<div class="container py-5">
+    <h1 class="mb-4">Hola, @User.Identity.Name!</h1>
+    <p class="lead">Bienvenido al panel de control de ECOS Digital.</p>
+
+    <div class="row mt-5">
+        @* Tarjeta para Alumnos *@
+        @if (User.IsInRole("Alumno"))
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">🚀 Mi Proyecto</h5>
+                        <p class="card-text">Gestiona los detalles de tu equipo y proyecto innovador.</p>
+                        <a asp-controller="Equipos" asp-action="Manage" class="btn btn-primary">Gestionar Proyecto</a>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @* Tarjeta para Maestros e Invitados *@
+        @if (User.IsInRole("Maestro") || User.IsInRole("Invitado"))
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">🗳️ Votar por Proyectos</h5>
+                        <p class="card-text">Explora los proyectos de los alumnos y emite tu voto.</p>
+                        <a asp-controller="Votacion" asp-action="Index" class="btn btn-success">Ir a Votación</a>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @* Tarjeta para Administradores (opcional) *@
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">⚙️ Administración</h5>
+                        <p class="card-text">Gestiona usuarios, roles y la configuración del evento.</p>
+                        <a asp-controller="Admin" asp-action="Index" class="btn btn-info">Panel de Admin</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
