@@ -1,0 +1,106 @@
+﻿@model IEnumerable<ECOS.Web.Controllers.ResultadoViewModel>
+
+    @{
+    ViewData["Title"] = "Resultados";
+    var posicion = 1;
+    }
+
+    <h1>📊 Resultados de Votación</h1>
+
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <a asp-action="Index" class="btn btn-secondary">← Volver a Votaciones</a>
+        </div>
+    </div>
+
+    @if (Model.Any())
+{
+    <div class="row">
+        @foreach (var resultado in Model)
+        {
+            var medalColor = posicion == 1 ? "warning" : (posicion == 2 ? "secondary" : (posicion == 3 ? "danger" : "primary"));
+            var medal = posicion == 1 ? "🥇" : (posicion == 2 ? "🥈" : (posicion == 3 ? "🥉" : ""));
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 border-@medalColor">
+                <div class="card-header bg-@medalColor text-white">
+                    <h4 class="mb-0">
+                        @medal Posición #@posicion
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            @if (!string.IsNullOrEmpty(resultado.Equipo.FotoUrl))
+                                {
+                            <img src="@resultado.Equipo.FotoUrl" alt="@resultado.Equipo.Nombre" class="img-fluid rounded">
+                                }
+                                else
+                                {
+                            <div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="height: 150px;">
+                                <span class="text-white display-4">📷</span>
+                            </div>
+                                }
+                        </div>
+                        <div class="col-md-8">
+                            <h3>@resultado.Equipo.Nombre</h3>
+                            <p class="text-muted">@resultado.Equipo.Descripcion</p>
+
+                            <div class="mt-3">
+                                <h2 class="text-@medalColor">@resultado.TotalVotos votos</h2>
+                                <div class="progress" style="height: 30px;">
+                                    <div class="progress-bar bg-@medalColor" role="progressbar"
+                                         style="width: @resultado.Porcentaje%"
+                                         aria-valuenow="@resultado.Porcentaje"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                        @resultado.Porcentaje.ToString("F1")%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <small>Integrantes: @resultado.Equipo.Integrantes</small>
+                </div>
+            </div>
+        </div>
+
+            posicion++;
+        }
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h4>Resumen General</h4>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Total de Equipos:</strong> @Model.Count()
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Total de Votos:</strong> @Model.Sum(r => r.TotalVotos)
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Equipo Ganador:</strong>
+                            @if (Model.Any())
+                            {
+                                var ganador = Model.First();
+                            <span class="text-success">🏆 @ganador.Equipo.Nombre con @ganador.TotalVotos votos (@ganador.Porcentaje.ToString("F1")%)</span>
+                            }
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading">Sin Resultados</h4>
+        <p>Aún no hay votos registrados en el sistema.</p>
+    </div>
+}

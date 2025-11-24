@@ -1,0 +1,9 @@
+C:\Users\yondo\source\repos\ECOS\ECOS.Web\obj\Debug\net10.0\ECOS.Web.csproj.AssemblyReference.cache
+C:\Users\yondo\source\repos\ECOS\ECOS.Web\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\yondo\source\repos\ECOS\ECOS.Web\obj\Debug\net10.0\ECOS.Web.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\yondo\source\repos\ECOS\ECOS.Web\obj\Debug\net10.0\ECOS.Web.AssemblyInfoInputs.cache
+C:\Users\yondo\source\repos\ECOS\ECOS.Web\obj\Debug\net10.0\ECOS.Web.AssemblyInfo.cs
+C:\Users\yondo\source\repos\ECOS\ECOS.Web\obj\Debug\net10.0\ECOS.Web.csproj.CoreCompileInputs.cache
+C:\Users\yondo\source\repos\ECOS\ECOS.Web\obj\Debug\net10.0\ECOS.Web.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\yondo\source\repos\ECOS\ECOS.Web\obj\Debug\net10.0\ECOS.Web.RazorAssemblyInfo.cache
+C:\Users\yondo\source\repos\ECOS\ECOS.Web\obj\Debug\net10.0\ECOS.Web.RazorAssemblyInfo.cs

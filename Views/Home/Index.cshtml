@@ -1,0 +1,100 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="text-center mb-5">
+    <h1 class="display-4">Bienvenido a ECOS</h1>
+    <p class="lead">Sistema de Votación para Equipos</p>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-header">Total Equipos</div>
+            <div class="card-body">
+                <h5 class="card-title display-4">@ViewBag.TotalEquipos</h5>
+                <p class="card-text">Equipos registrados</p>
+            </div>
+            <div class="card-footer">
+                <a asp-controller="Equipos" asp-action="Index" class="text-white">Ver todos →</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-header">Total Jueces</div>
+            <div class="card-body">
+                <h5 class="card-title display-4">@ViewBag.TotalJueces</h5>
+                <p class="card-text">Jueces registrados</p>
+            </div>
+            <div class="card-footer">
+                <a asp-controller="Jueces" asp-action="Index" class="text-white">Ver todos →</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-header">Votos Emitidos</div>
+            <div class="card-body">
+                <h5 class="card-title display-4">@ViewBag.TotalVotos</h5>
+                <p class="card-text">Votos registrados</p>
+            </div>
+            <div class="card-footer">
+                <a asp-controller="Votaciones" asp-action="Index" class="text-white">Ver detalles →</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-header">Jueces que Votaron</div>
+            <div class="card-body">
+                <h5 class="card-title display-4">@ViewBag.JuecesQueVotaron</h5>
+                <p class="card-text">De @ViewBag.TotalJueces jueces</p>
+            </div>
+            <div class="card-footer">
+                <a asp-controller="Votaciones" asp-action="Resultados" class="text-white">Ver resultados →</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5>Acciones Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a asp-controller="Equipos" asp-action="Create" class="btn btn-primary btn-lg">
+                        ➕ Registrar Nuevo Equipo
+                    </a>
+                    <a asp-controller="Jueces" asp-action="Create" class="btn btn-success btn-lg">
+                        ➕ Registrar Nuevo Juez
+                    </a>
+                    <a asp-controller="Votaciones" asp-action="Resultados" class="btn btn-info btn-lg">
+                        📊 Ver Resultados
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5>Información del Sistema</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Sistema:</strong> ECOS - Sistema de Votación</p>
+                <p><strong>Versión:</strong> 1.0</p>
+                <p><strong>Descripción:</strong> Sistema para registro de equipos, jueces y gestión de votaciones.</p>
+                <hr>
+                <p class="mb-0"><small class="text-muted">Los jueces pueden votar una sola vez a través de la aplicación móvil.</small></p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,60 @@
+@model ECOS.Shared.Models.Equipo
+
+@{
+    ViewData["Title"] = "Editar Equipo";
+}
+
+<h1>Editar Equipo</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="FechaRegistro" />
+            <input type="hidden" asp-for="Activo" />
+
+            <div class="form-group mb-3">
+                <label asp-for="Nombre" class="control-label"></label>
+                <input asp-for="Nombre" class="form-control" />
+                <span asp-validation-for="Nombre" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Descripcion" class="control-label"></label>
+                <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Integrantes" class="control-label"></label>
+                <textarea asp-for="Integrantes" class="form-control" rows="2"></textarea>
+                <span asp-validation-for="Integrantes" class="text-danger"></span>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.FotoUrl))
+            {
+            <div class="form-group mb-3">
+                <label>Foto Actual</label><br />
+                <img src="@Model.FotoUrl" alt="Foto" style="max-width: 200px;" class="img-thumbnail" />
+                <input type="hidden" asp-for="FotoUrl" />
+            </div>
+            }
+
+            <div class="form-group mb-3">
+                <label for="foto" class="control-label">Nueva Foto (opcional)</label>
+                <input type="file" name="foto" id="foto" class="form-control" accept="image/*" />
+            </div>
+
+            <div class="form-group mt-4">
+                <input type="submit" value="Guardar Cambios" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

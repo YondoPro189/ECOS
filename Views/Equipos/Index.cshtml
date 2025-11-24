@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ECOS.Shared.Models.Equipo>
+
+    @{
+    ViewData["Title"] = "Equipos";
+    }
+
+    <h1>Equipos Registrados</h1>
+
+    <p>
+        <a asp-action="Create" class="btn btn-primary">➕ Crear Nuevo Equipo</a>
+    </p>
+
+    <div class="row">
+        @foreach (var equipo in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                @if (!string.IsNullOrEmpty(equipo.FotoUrl))
+                {
+                <img src="@equipo.FotoUrl" class="card-img-top" alt="@equipo.Nombre" style="height: 200px; object-fit: cover;">
+                }
+                else
+                {
+                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <span class="text-white display-4">📷</span>
+                </div>
+                }
+                <div class="card-body">
+                    <h5 class="card-title">@equipo.Nombre</h5>
+                    <p class="card-text">@equipo.Descripcion</p>
+                    <p class="card-text"><small class="text-muted">Integrantes: @equipo.Integrantes</small></p>
+                    <p class="card-text">
+                        <span class="badge bg-info">@equipo.Votaciones.Count votos</span>
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <a asp-action="Edit" asp-route-id="@equipo.Id" class="btn btn-sm btn-warning">Editar</a>
+                    <a asp-action="Details" asp-route-id="@equipo.Id" class="btn btn-sm btn-info">Detalles</a>
+                    <a asp-action="Delete" asp-route-id="@equipo.Id" class="btn btn-sm btn-danger">Eliminar</a>
+                </div>
+            </div>
+        </div>
+    }
+    </div>
+
+    @if (!Model.Any())
+{
+    <div class="alert alert-info" role="alert">
+        No hay equipos registrados. <a asp-action="Create">Registra el primero aquí</a>.
+    </div>
+}
