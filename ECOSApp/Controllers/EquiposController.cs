@@ -24,13 +24,19 @@ namespace ECOSApp.Controllers
                 var equipos = await _context.Equipos
                     .OrderByDescending(e => e.FechaRegistro)
                     .ToListAsync();
-                return View(equipos);
+                
+                // Pasar la lista a través de ViewBag en lugar del modelo
+                ViewBag.Equipos = equipos;
+                
+                // Pasar un modelo vacío para el formulario de creación
+                return View(new Equipo());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al obtener equipos");
                 TempData["Error"] = "Error al cargar los equipos";
-                return View(new List<Equipo>());
+                ViewBag.Equipos = new List<Equipo>();
+                return View(new Equipo());
             }
         }
 
@@ -58,7 +64,8 @@ namespace ECOSApp.Controllers
                 TempData["Error"] = "Error al crear el equipo";
             }
             
-            return View("Index", await _context.Equipos.ToListAsync());
+            ViewBag.Equipos = await _context.Equipos.ToListAsync();
+            return View("Index", equipo);
         }
 
         // GET: Equipos/Edit/5

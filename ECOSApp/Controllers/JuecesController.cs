@@ -24,13 +24,19 @@ namespace ECOSApp.Controllers
                 var jueces = await _context.Jueces
                     .OrderByDescending(j => j.FechaRegistro)
                     .ToListAsync();
-                return View(jueces);
+                
+                // Pasar la lista a través de ViewBag en lugar del modelo
+                ViewBag.Jueces = jueces;
+                
+                // Pasar un modelo vacío para el formulario de creación
+                return View(new Juez());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al obtener jueces");
                 TempData["Error"] = "Error al cargar los jueces";
-                return View(new List<Juez>());
+                ViewBag.Jueces = new List<Juez>();
+                return View(new Juez());
             }
         }
 
@@ -58,7 +64,8 @@ namespace ECOSApp.Controllers
                 TempData["Error"] = "Error al crear el juez";
             }
             
-            return View("Index", await _context.Jueces.ToListAsync());
+            ViewBag.Jueces = await _context.Jueces.ToListAsync();
+            return View("Index", juez);
         }
 
         // GET: Jueces/Edit/5
