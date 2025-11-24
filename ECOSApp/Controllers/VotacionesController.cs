@@ -25,14 +25,16 @@ namespace ECOSApp.Controllers
                     .OrderByDescending(v => v.FechaVoto)
                     .ToListAsync();
 
-                // Calcular estadísticas
                 var equipos = await _context.Equipos.ToListAsync();
+                var jueces = await _context.Jueces.ToListAsync();
+
+                // Calcular estadísticas por equipo
                 var estadisticas = equipos.Select(e => new
                 {
                     Equipo = e,
                     Votaciones = votaciones.Where(v => v.EquipoId == e.Id).ToList(),
                     PromedioVotos = votaciones.Where(v => v.EquipoId == e.Id).Any() 
-                        ? votaciones.Where(v => v.EquipoId == e.Id).Average(v => v.Puntuacion) 
+                        ? Math.Round(votaciones.Where(v => v.EquipoId == e.Id).Average(v => v.Puntuacion), 1)
                         : 0,
                     TotalVotos = votaciones.Count(v => v.EquipoId == e.Id)
                 })
@@ -40,17 +42,20 @@ namespace ECOSApp.Controllers
                 .ToList();
 
                 ViewBag.Estadisticas = estadisticas;
+                ViewBag.Votaciones = votaciones;
                 ViewBag.TotalVotos = votaciones.Count;
                 ViewBag.TotalEquipos = equipos.Count;
-                ViewBag.TotalJueces = await _context.Jueces.CountAsync();
+                ViewBag.TotalJueces = jueces.Count;
+                ViewBag.Equipos = equipos;
+                ViewBag.Jueces = jueces;
 
-                return View(votaciones);
+                return View();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al obtener votaciones");
                 TempData["Error"] = "Error al cargar las votaciones";
-                return View(new List<Votacion>());
+                return View();
             }
         }
 
@@ -162,7 +167,7 @@ namespace ECOSApp.Controllers
                     equipoId = e.Id,
                     equipoNombre = e.Nombre,
                     promedioVotos = votaciones.Where(v => v.EquipoId == e.Id).Any()
-                        ? votaciones.Where(v => v.EquipoId == e.Id).Average(v => v.Puntuacion)
+                        ? Math.Round(votaciones.Where(v => v.EquipoId == e.Id).Average(v => v.Puntuacion), 1)
                         : 0,
                     totalVotos = votaciones.Count(v => v.EquipoId == e.Id),
                     votaciones = votaciones.Where(v => v.EquipoId == e.Id).Select(v => new

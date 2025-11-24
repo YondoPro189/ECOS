@@ -25,10 +25,7 @@ namespace ECOSApp.Controllers
                     .OrderByDescending(j => j.FechaRegistro)
                     .ToListAsync();
                 
-                // Pasar la lista a través de ViewBag en lugar del modelo
                 ViewBag.Jueces = jueces;
-                
-                // Pasar un modelo vacío para el formulario de creación
                 return View(new Juez());
             }
             catch (Exception ex)
@@ -170,25 +167,6 @@ namespace ECOSApp.Controllers
             }
 
             return RedirectToAction(nameof(Index));
-        }
-
-        // GET: Jueces/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var juez = await _context.Jueces
-                .FirstOrDefaultAsync(m => m.Id == id);
-            
-            if (juez == null)
-            {
-                return NotFound();
-            }
-
-            return View(juez);
         }
     }
 }
