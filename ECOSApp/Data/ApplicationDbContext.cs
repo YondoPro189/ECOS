@@ -53,28 +53,30 @@ namespace ECOSApp.Data
                 entity.HasIndex(v => v.JuezId);
             });
 
-            // Datos de ejemplo (seed data)
+            // Datos de ejemplo (seed data) - USANDO VALORES ESTÁTICOS
+            var seedDate = new DateTime(2025, 11, 24, 11, 13, 49, 133, DateTimeKind.Utc);
+
             modelBuilder.Entity<Equipo>().HasData(
                 new Equipo
                 {
                     Id = 1,
                     Nombre = "ECOS-VOTE Innovación",
                     Descripcion = "Sistema de votación digital para eventos educativos con tecnología de vanguardia.",
-                    FechaRegistro = DateTime.Now
+                    FechaRegistro = seedDate
                 },
                 new Equipo
                 {
                     Id = 2,
                     Nombre = "Tech Innovators",
                     Descripcion = "Plataforma de gestión empresarial con inteligencia artificial integrada.",
-                    FechaRegistro = DateTime.Now
+                    FechaRegistro = seedDate
                 },
                 new Equipo
                 {
                     Id = 3,
                     Nombre = "Code Masters",
                     Descripcion = "Aplicación móvil para el seguimiento de proyectos colaborativos en tiempo real.",
-                    FechaRegistro = DateTime.Now
+                    FechaRegistro = seedDate
                 }
             );
 
@@ -85,7 +87,7 @@ namespace ECOSApp.Data
                     Nombre = "Dr. Carlos Méndez",
                     Especialidad = "Tecnología e Innovación",
                     Descripcion = "Especialista en desarrollo de software y metodologías ágiles con 15 años de experiencia.",
-                    FechaRegistro = DateTime.Now
+                    FechaRegistro = seedDate
                 },
                 new Juez
                 {
@@ -93,7 +95,7 @@ namespace ECOSApp.Data
                     Nombre = "Dra. Ana García",
                     Especialidad = "Diseño UX/UI",
                     Descripcion = "Experta en experiencia de usuario y diseño de interfaces digitales centradas en el usuario.",
-                    FechaRegistro = DateTime.Now
+                    FechaRegistro = seedDate
                 },
                 new Juez
                 {
@@ -101,7 +103,7 @@ namespace ECOSApp.Data
                     Nombre = "Ing. Roberto Sánchez",
                     Especialidad = "Arquitectura de Software",
                     Descripcion = "Arquitecto de soluciones en la nube con amplia experiencia en sistemas escalables.",
-                    FechaRegistro = DateTime.Now
+                    FechaRegistro = seedDate
                 }
             );
         }
