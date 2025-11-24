@@ -1,5 +1,12 @@
 @{
     ViewData["Title"] = "Votaciones - ECOS-VOTE";
+    var votaciones = ViewBag.Votaciones as List<Votacion> ?? new List<Votacion>();
+    var equipos = ViewBag.Equipos as List<Equipo> ?? new List<Equipo>();
+    var jueces = ViewBag.Jueces as List<Juez> ?? new List<Juez>();
+    var estadisticas = ViewBag.Estadisticas as dynamic ?? new List<dynamic>();
+    var totalVotos = ViewBag.TotalVotos ?? 0;
+    var totalEquipos = ViewBag.TotalEquipos ?? 0;
+    var totalJueces = ViewBag.TotalJueces ?? 0;
 }
 
 <div class="votaciones-container">
@@ -7,512 +14,383 @@
     <div class="page-header">
         <div class="header-content">
             <div>
-                <h1>Resultados de Votaciones</h1>
-                <p>Visualiza los resultados en tiempo real del evento</p>
+                <h1>Sistema de Votaciones</h1>
+                <p>Registra votos y visualiza resultados en tiempo real</p>
             </div>
             <div class="stats-summary">
                 <div class="summary-item">
-                    <span class="summary-value">45</span>
+                    <span class="summary-value">@totalVotos</span>
                     <span class="summary-label">Votos Totales</span>
                 </div>
                 <div class="summary-item">
-                    <span class="summary-value">12</span>
+                    <span class="summary-value">@totalEquipos</span>
                     <span class="summary-label">Equipos</span>
                 </div>
                 <div class="summary-item">
-                    <span class="summary-value">8</span>
+                    <span class="summary-value">@totalJueces</span>
                     <span class="summary-label">Jueces</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Top Teams Ranking -->
-    <div class="ranking-section">
-        <h2>🏆 Ranking de Equipos</h2>
-        <div class="ranking-grid">
-            <!-- 1st Place -->
-            <div class="ranking-card first-place">
-                <div class="rank-badge gold">
-                    <span class="rank-number">1</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert-success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert-error">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            @TempData["Error"]
+        </div>
+    }
+
+    <div class="content-grid">
+        <!-- Panel de Votación -->
+        <div class="voting-panel">
+            <div class="panel-header">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 11l3 3L22 4"></path>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
                     </svg>
-                </div>
-                <h3>ECOS-VOTE Innovación</h3>
-                <div class="score-display">
-                    <div class="score-bar">
-                        <div class="score-fill" style="width: 95%"></div>
-                    </div>
-                    <span class="score-value">4.8 / 5.0</span>
-                </div>
-                <div class="votes-count">15 votos</div>
+                    Registrar Voto
+                </h2>
             </div>
 
-            <!-- 2nd Place -->
-            <div class="ranking-card second-place">
-                <div class="rank-badge silver">
-                    <span class="rank-number">2</span>
+            <form asp-action="Create" method="post" class="voting-form">
+                @Html.AntiForgeryToken()
+                
+                <div class="form-group">
+                    <label for="juezId">Seleccionar Juez *</label>
+                    <select id="juezId" name="juezId" class="form-control" required>
+                        <option value="">-- Selecciona un Juez --</option>
+                        @foreach (var juez in jueces)
+                        {
+                            <option value="@juez.Id">@juez.Nombre - @juez.Especialidad</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="equipoId">Seleccionar Equipo *</label>
+                    <select id="equipoId" name="equipoId" class="form-control" required>
+                        <option value="">-- Selecciona un Equipo --</option>
+                        @foreach (var equipo in equipos)
+                        {
+                            <option value="@equipo.Id">@equipo.Nombre</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="puntuacion">Puntuación (1-5 estrellas) *</label>
+                    <div class="star-rating">
+                        <input type="radio" id="star5" name="puntuacion" value="5" required>
+                        <label for="star5" class="star">★</label>
+                        
+                        <input type="radio" id="star4" name="puntuacion" value="4">
+                        <label for="star4" class="star">★</label>
+                        
+                        <input type="radio" id="star3" name="puntuacion" value="3">
+                        <label for="star3" class="star">★</label>
+                        
+                        <input type="radio" id="star2" name="puntuacion" value="2">
+                        <label for="star2" class="star">★</label>
+                        
+                        <input type="radio" id="star1" name="puntuacion" value="1">
+                        <label for="star1" class="star">★</label>
+                    </div>
+                    <div class="rating-text">Selecciona una calificación</div>
+                </div>
+
+                <button type="submit" class="btn-vote">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    Registrar Voto
+                </button>
+            </form>
+        </div>
+
+        <!-- Ranking de Equipos -->
+        <div class="ranking-panel">
+            <div class="panel-header">
+                <h2>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                     </svg>
-                </div>
-                <h3>Tech Innovators</h3>
-                <div class="score-display">
-                    <div class="score-bar">
-                        <div class="score-fill" style="width: 88%"></div>
-                    </div>
-                    <span class="score-value">4.4 / 5.0</span>
-                </div>
-                <div class="votes-count">12 votos</div>
+                    Ranking de Equipos
+                </h2>
             </div>
 
-            <!-- 3rd Place -->
-            <div class="ranking-card third-place">
-                <div class="rank-badge bronze">
-                    <span class="rank-number">3</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                </div>
-                <h3>Code Masters</h3>
-                <div class="score-display">
-                    <div class="score-bar">
-                        <div class="score-fill" style="width: 82%"></div>
+            <div class="ranking-list">
+                @if (estadisticas != null && ((IEnumerable<dynamic>)estadisticas).Any())
+                {
+                    var position = 1;
+                    foreach (var stat in estadisticas)
+                    {
+                        var positionClass = position == 1 ? "gold" : position == 2 ? "silver" : position == 3 ? "bronze" : "";
+                        
+                        <div class="ranking-item @positionClass">
+                            <div class="rank-number">
+                                <span class="position">@position</span>
+                                @if (position <= 3)
+                                {
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                    </svg>
+                                }
+                            </div>
+                            <div class="rank-info">
+                                <div class="team-name">@stat.Equipo.Nombre</div>
+                                <div class="team-stats">
+                                    <span class="score">@stat.PromedioVotos ⭐</span>
+                                    <span class="votes">@stat.TotalVotos votos</span>
+                                </div>
+                            </div>
+                            <div class="rank-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: @(stat.PromedioVotos * 20)%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        position++;
+                    }
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <p>No hay votaciones registradas todavía</p>
                     </div>
-                    <span class="score-value">4.1 / 5.0</span>
-                </div>
-                <div class="votes-count">10 votos</div>
+                }
             </div>
         </div>
     </div>
 
-    <!-- Detailed Results -->
-    <div class="results-section">
-        <h2>📊 Resultados Detallados</h2>
-        <div class="results-table">
-            <div class="table-header">
-                <div class="col-rank">Posición</div>
-                <div class="col-team">Equipo</div>
-                <div class="col-score">Puntuación</div>
-                <div class="col-votes">Votos</div>
-                <div class="col-chart">Distribución</div>
-            </div>
-
-            <div class="table-row">
-                <div class="col-rank">
-                    <span class="position-badge pos-1">1°</span>
-                </div>
-                <div class="col-team">
-                    <div class="team-info">
-                        <div class="team-avatar">EV</div>
-                        <span>ECOS-VOTE Innovación</span>
-                    </div>
-                </div>
-                <div class="col-score">
-                    <span class="score-highlight">4.8</span>
-                </div>
-                <div class="col-votes">15</div>
-                <div class="col-chart">
-                    <div class="mini-chart">
-                        <div class="chart-bar" style="height: 20%">1</div>
-                        <div class="chart-bar" style="height: 40%">2</div>
-                        <div class="chart-bar" style="height: 60%">3</div>
-                        <div class="chart-bar" style="height: 80%">4</div>
-                        <div class="chart-bar" style="height: 100%">5</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="table-row">
-                <div class="col-rank">
-                    <span class="position-badge pos-2">2°</span>
-                </div>
-                <div class="col-team">
-                    <div class="team-info">
-                        <div class="team-avatar">TI</div>
-                        <span>Tech Innovators</span>
-                    </div>
-                </div>
-                <div class="col-score">
-                    <span class="score-highlight">4.4</span>
-                </div>
-                <div class="col-votes">12</div>
-                <div class="col-chart">
-                    <div class="mini-chart">
-                        <div class="chart-bar" style="height: 15%">1</div>
-                        <div class="chart-bar" style="height: 35%">2</div>
-                        <div class="chart-bar" style="height: 65%">3</div>
-                        <div class="chart-bar" style="height: 90%">4</div>
-                        <div class="chart-bar" style="height: 85%">5</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="table-row">
-                <div class="col-rank">
-                    <span class="position-badge pos-3">3°</span>
-                </div>
-                <div class="col-team">
-                    <div class="team-info">
-                        <div class="team-avatar">CM</div>
-                        <span>Code Masters</span>
-                    </div>
-                </div>
-                <div class="col-score">
-                    <span class="score-highlight">4.1</span>
-                </div>
-                <div class="col-votes">10</div>
-                <div class="col-chart">
-                    <div class="mini-chart">
-                        <div class="chart-bar" style="height: 10%">1</div>
-                        <div class="chart-bar" style="height: 30%">2</div>
-                        <div class="chart-bar" style="height: 70%">3</div>
-                        <div class="chart-bar" style="height: 85%">4</div>
-                        <div class="chart-bar" style="height: 75%">5</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="table-row">
-                <div class="col-rank">
-                    <span class="position-badge">4°</span>
-                </div>
-                <div class="col-team">
-                    <div class="team-info">
-                        <div class="team-avatar">DT</div>
-                        <span>Digital Titans</span>
-                    </div>
-                </div>
-                <div class="col-score">
-                    <span class="score-highlight">3.9</span>
-                </div>
-                <div class="col-votes">8</div>
-                <div class="col-chart">
-                    <div class="mini-chart">
-                        <div class="chart-bar" style="height: 25%">1</div>
-                        <div class="chart-bar" style="height: 45%">2</div>
-                        <div class="chart-bar" style="height: 65%">3</div>
-                        <div class="chart-bar" style="height: 70%">4</div>
-                        <div class="chart-bar" style="height: 60%">5</div>
-                    </div>
-                </div>
-            </div>
+    <!-- Lista de Votaciones Recientes -->
+    <div class="recent-votes-section">
+        <div class="section-header">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Votaciones Recientes
+            </h2>
+            <span class="vote-count">@votaciones.Count votos registrados</span>
         </div>
+
+        @if (votaciones.Any())
+        {
+            <div class="votes-table">
+                <div class="table-header">
+                    <div class="col-date">Fecha</div>
+                    <div class="col-judge">Juez</div>
+                    <div class="col-team">Equipo</div>
+                    <div class="col-score">Puntuación</div>
+                    <div class="col-actions">Acciones</div>
+                </div>
+
+                @foreach (var voto in votaciones)
+                {
+                    <div class="table-row">
+                        <div class="col-date">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            @voto.FechaVoto.ToString("dd/MM/yyyy HH:mm")
+                        </div>
+                        <div class="col-judge">
+                            <div class="judge-badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                @voto.JuezNombre
+                            </div>
+                        </div>
+                        <div class="col-team">
+                            <div class="team-badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                @voto.EquipoNombre
+                            </div>
+                        </div>
+                        <div class="col-score">
+                            <div class="score-stars score-@voto.Puntuacion">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= voto.Puntuacion)
+                                    {
+                                        <span class="star filled">★</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="star">★</span>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="col-actions">
+                            <form asp-action="Delete" asp-route-id="@voto.Id" method="post" class="delete-form" onsubmit="return confirm('¿Estás seguro de eliminar esta votación?')">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn-delete" title="Eliminar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state-large">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 11l3 3L22 4"></path>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                <h3>No hay votaciones registradas</h3>
+                <p>Comienza registrando el primer voto usando el formulario de arriba</p>
+            </div>
+        }
     </div>
 </div>
 
 <style>
-    .votaciones-container {
-        padding: 30px;
-        max-width: 1400px;
-        margin: 0 auto;
-    }
-
-    .page-header {
-        background: white;
-        border-radius: 16px;
-        padding: 30px;
-        margin-bottom: 30px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    .header-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 20px;
-    }
-
-    .page-header h1 {
-        margin: 0 0 8px 0;
-        color: #2d3748;
-        font-size: 32px;
-        font-weight: 700;
-    }
-
-    .page-header p {
-        margin: 0;
-        color: #718096;
-        font-size: 16px;
-    }
-
-    .stats-summary {
-        display: flex;
-        gap: 30px;
-    }
-
-    .summary-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 16px 24px;
-        background: #f7fafc;
-        border-radius: 12px;
-    }
-
-    .summary-value {
-        font-size: 32px;
-        font-weight: 700;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .summary-label {
-        font-size: 13px;
-        color: #718096;
-        font-weight: 600;
-    }
-
-    .ranking-section {
-        margin-bottom: 30px;
-    }
-
-    .ranking-section h2 {
-        color: #2d3748;
-        font-size: 24px;
-        font-weight: 600;
-        margin-bottom: 20px;
-    }
-
-    .ranking-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 24px;
-    }
-
-    .ranking-card {
-        background: white;
-        border-radius: 16px;
-        padding: 30px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        text-align: center;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .ranking-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-    }
-
-    .ranking-card.first-place::before {
-        background: linear-gradient(90deg, #ffd700, #ffed4e);
-    }
-
-    .ranking-card.second-place::before {
-        background: linear-gradient(90deg, #c0c0c0, #e8e8e8);
-    }
-
-    .ranking-card.third-place::before {
-        background: linear-gradient(90deg, #cd7f32, #e5a76b);
-    }
-
-    .ranking-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-    }
-
-    .rank-badge {
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 20px;
-        position: relative;
-        font-size: 28px;
-        font-weight: 700;
-        color: white;
-    }
-
-    .rank-badge.gold {
-        background: linear-gradient(135deg, #ffd700, #ffed4e);
-        box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
-    }
-
-    .rank-badge.silver {
-        background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
-        box-shadow: 0 8px 20px rgba(192, 192, 192, 0.3);
-        color: #4a5568;
-    }
-
-    .rank-badge.bronze {
-        background: linear-gradient(135deg, #cd7f32, #e5a76b);
-        box-shadow: 0 8px 20px rgba(205, 127, 50, 0.3);
-    }
-
-    .rank-badge svg {
-        position: absolute;
-        bottom: -5px;
-        width: 20px;
-        height: 20px;
-    }
-
-    .ranking-card h3 {
-        margin: 0 0 20px 0;
-        color: #2d3748;
-        font-size: 20px;
-        font-weight: 600;
-    }
-
-    .score-display {
-        margin-bottom: 12px;
-    }
-
-    .score-bar {
-        height: 8px;
-        background: #e2e8f0;
-        border-radius: 4px;
-        overflow: hidden;
-        margin-bottom: 8px;
-    }
-
-    .score-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #667eea, #764ba2);
-        border-radius: 4px;
-        transition: width 1s ease;
-    }
-
-    .score-value {
-        font-size: 24px;
-        font-weight: 700;
-        color: #2d3748;
-    }
-
-    .votes-count {
-        color: #718096;
-        font-size: 14px;
-    }
-
-    .results-section {
-        background: white;
-        border-radius: 16px;
-        padding: 30px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    .results-section h2 {
-        color: #2d3748;
-        font-size: 24px;
-        font-weight: 600;
-        margin-bottom: 24px;
-    }
-
-    .results-table {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .table-header, .table-row {
-        display: grid;
-        grid-template-columns: 100px 1fr 120px 100px 200px;
-        gap: 20px;
-        align-items: center;
-        padding: 16px;
-        border-radius: 12px;
-    }
-
-    .table-header {
-        background: #f7fafc;
-        font-weight: 600;
-        color: #4a5568;
-        font-size: 14px;
-    }
-
-    .table-row {
-        background: white;
-        border: 1px solid #e2e8f0;
-        transition: all 0.3s ease;
-    }
-
-    .table-row:hover {
-        background: #f7fafc;
-        border-color: #cbd5e0;
-    }
-
-    .position-badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        font-weight: 700;
-        background: #edf2f7;
-        color: #4a5568;
-    }
-
-    .position-badge.pos-1 {
-        background: linear-gradient(135deg, #ffd700, #ffed4e);
-        color: white;
-    }
-
-    .position-badge.pos-2 {
-        background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
-        color: #4a5568;
-    }
-
-    .position-badge.pos-3 {
-        background: linear-gradient(135deg, #cd7f32, #e5a76b);
-        color: white;
-    }
-
-    .team-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .team-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 700;
-        font-size: 14px;
-    }
-
-    .score-highlight {
-        font-size: 20px;
-        font-weight: 700;
-        color: #667eea;
-    }
-
-    .mini-chart {
-        display: flex;
-        gap: 4px;
-        align-items: flex-end;
-        height: 40px;
-    }
-
-    .chart-bar {
-        flex: 1;
-        background: linear-gradient(180deg, #667eea, #764ba2);
-        border-radius: 4px 4px 0 0;
-        min-height: 8px;
-        display: flex;
-        align-items: flex-start;
-        justify-content: center;
-        font-size: 10px;
-        color: white;
-        font-weight: 600;
-        padding-top: 2px;
+    .votaciones-container { padding: 30px; max-width: 1400px; margin: 0 auto; }
+    
+    .page-header { background: white; border-radius: 16px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
+    .header-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+    .page-header h1 { margin: 0 0 8px 0; color: #2d3748; font-size: 32px; font-weight: 700; }
+    .page-header p { margin: 0; color: #718096; font-size: 16px; }
+    
+    .stats-summary { display: flex; gap: 20px; }
+    .summary-item { display: flex; flex-direction: column; align-items: center; padding: 16px 24px; background: #f7fafc; border-radius: 12px; }
+    .summary-value { font-size: 32px; font-weight: 700; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .summary-label { font-size: 13px; color: #718096; font-weight: 600; margin-top: 4px; }
+    
+    .alert-success { display: flex; align-items: center; gap: 12px; background: #f0fdf4; border: 1px solid #86efac; color: #166534; padding: 16px; border-radius: 12px; margin-bottom: 24px; font-weight: 500; }
+    .alert-error { display: flex; align-items: center; gap: 12px; background: #fee; border: 1px solid #fca5a5; color: #991b1b; padding: 16px; border-radius: 12px; margin-bottom: 24px; font-weight: 500; }
+    
+    .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+    
+    .voting-panel, .ranking-panel { background: white; border-radius: 16px; padding: 30px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
+    .panel-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #e2e8f0; }
+    .panel-header h2 { margin: 0; color: #2d3748; font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+    
+    .voting-form .form-group { margin-bottom: 24px; }
+    .voting-form label { display: block; color: #4a5568; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
+    .voting-form .form-control { width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 15px; transition: all 0.3s ease; }
+    .voting-form .form-control:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+    
+    .star-rating { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 8px; }
+    .star-rating input[type="radio"] { display: none; }
+    .star-rating .star { font-size: 40px; color: #cbd5e0; cursor: pointer; transition: all 0.2s ease; }
+    .star-rating .star:hover, .star-rating .star:hover ~ .star, .star-rating input[type="radio"]:checked ~ .star { color: #fbbf24; transform: scale(1.1); }
+    .rating-text { text-align: center; color: #718096; font-size: 14px; margin-top: 12px; }
+    
+    .btn-vote { width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .btn-vote:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3); }
+    
+    .ranking-list { display: flex; flex-direction: column; gap: 16px; max-height: 500px; overflow-y: auto; }
+    .ranking-item { display: flex; align-items: center; gap: 16px; padding: 16px; background: #f7fafc; border-radius: 12px; transition: all 0.3s ease; }
+    .ranking-item:hover { transform: translateX(4px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+    .ranking-item.gold { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #fbbf24; }
+    .ranking-item.silver { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); border: 2px solid #9ca3af; }
+    .ranking-item.bronze { background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%); border: 2px solid #f97316; }
+    
+    .rank-number { display: flex; flex-direction: column; align-items: center; min-width: 50px; }
+    .rank-number .position { font-size: 24px; font-weight: 700; color: #2d3748; }
+    .rank-info { flex: 1; }
+    .team-name { font-weight: 600; color: #2d3748; font-size: 16px; margin-bottom: 4px; }
+    .team-stats { display: flex; gap: 16px; font-size: 14px; }
+    .team-stats .score { color: #667eea; font-weight: 600; }
+    .team-stats .votes { color: #718096; }
+    .rank-progress { width: 100px; }
+    .progress-bar { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 4px; transition: width 0.5s ease; }
+    
+    .recent-votes-section { background: white; border-radius: 16px; padding: 30px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #e2e8f0; }
+    .section-header h2 { margin: 0; color: #2d3748; font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+    .vote-count { background: #f7fafc; color: #4a5568; padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; }
+    
+    .votes-table { display: flex; flex-direction: column; gap: 8px; }
+    .table-header, .table-row { display: grid; grid-template-columns: 180px 1fr 1fr 150px 80px; gap: 16px; align-items: center; padding: 16px; border-radius: 12px; }
+    .table-header { background: #f7fafc; font-weight: 600; color: #4a5568; font-size: 14px; }
+    .table-row { background: white; border: 1px solid #e2e8f0; transition: all 0.3s ease; }
+    .table-row:hover { background: #f7fafc; border-color: #cbd5e0; transform: translateX(4px); }
+    
+    .col-date { display: flex; align-items: center; gap: 8px; color: #718096; font-size: 14px; }
+    .judge-badge, .team-badge { display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: #edf2f7; border-radius: 8px; font-size: 14px; color: #4a5568; font-weight: 500; }
+    
+    .score-stars { display: flex; gap: 2px; }
+    .score-stars .star { font-size: 20px; color: #cbd5e0; }
+    .score-stars .star.filled { color: #fbbf24; }
+    
+    .delete-form { display: inline; }
+    .btn-delete { width: 36px; height: 36px; border-radius: 8px; border: none; background: #fee; color: #e53e3e; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+    .btn-delete:hover { background: #e53e3e; color: white; transform: scale(1.1); }
+    
+    .empty-state, .empty-state-large { text-align: center; padding: 60px 20px; color: #718096; }
+    .empty-state svg, .empty-state-large svg { color: #cbd5e0; margin: 0 auto 20px; }
+    .empty-state-large h3 { color: #2d3748; margin: 20px 0 12px; font-size: 24px; }
+    .empty-state-large p { color: #718096; font-size: 16px; }
+    
+    @media (max-width: 1024px) {
+        .content-grid { grid-template-columns: 1fr; }
+        .table-header, .table-row { grid-template-columns: 1fr; }
+        .stats-summary { flex-wrap: wrap; }
     }
 </style>
+
+<script>
+    // Actualizar texto de rating al seleccionar estrellas
+    document.querySelectorAll('.star-rating input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const value = this.value;
+            const texts = {
+                '1': '⭐ Muy Deficiente',
+                '2': '⭐⭐ Deficiente',
+                '3': '⭐⭐⭐ Regular',
+                '4': '⭐⭐⭐⭐ Bueno',
+                '5': '⭐⭐⭐⭐⭐ Excelente'
+            };
+            document.querySelector('.rating-text').textContent = texts[value];
+        });
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
