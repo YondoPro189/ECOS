@@ -1,0 +1,11 @@
+C:\Users\yondo\source\repos\ECOS\ECOS.Shared\bin\Debug\net10.0\ECOS.Shared.deps.json
+C:\Users\yondo\source\repos\ECOS\ECOS.Shared\bin\Debug\net10.0\ECOS.Shared.dll
+C:\Users\yondo\source\repos\ECOS\ECOS.Shared\bin\Debug\net10.0\ECOS.Shared.pdb
+C:\Users\yondo\source\repos\ECOS\ECOS.Shared\obj\Debug\net10.0\ECOS.Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\yondo\source\repos\ECOS\ECOS.Shared\obj\Debug\net10.0\ECOS.Shared.AssemblyInfoInputs.cache
+C:\Users\yondo\source\repos\ECOS\ECOS.Shared\obj\Debug\net10.0\ECOS.Shared.AssemblyInfo.cs
+C:\Users\yondo\source\repos\ECOS\ECOS.Shared\obj\Debug\net10.0\ECOS.Shared.csproj.CoreCompileInputs.cache
+C:\Users\yondo\source\repos\ECOS\ECOS.Shared\obj\Debug\net10.0\ECOS.Shared.dll
+C:\Users\yondo\source\repos\ECOS\ECOS.Shared\obj\Debug\net10.0\refint\ECOS.Shared.dll
+C:\Users\yondo\source\repos\ECOS\ECOS.Shared\obj\Debug\net10.0\ECOS.Shared.pdb
+C:\Users\yondo\source\repos\ECOS\ECOS.Shared\obj\Debug\net10.0\ref\ECOS.Shared.dll
