@@ -16,7 +16,6 @@ namespace ECOSApp.Controllers
             _logger = logger;
         }
 
-        // GET: Equipos
         public async Task<IActionResult> Index()
         {
             try

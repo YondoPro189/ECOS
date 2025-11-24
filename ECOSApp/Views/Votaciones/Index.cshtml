@@ -3,7 +3,7 @@
     var votaciones = ViewBag.Votaciones as List<Votacion> ?? new List<Votacion>();
     var equipos = ViewBag.Equipos as List<Equipo> ?? new List<Equipo>();
     var jueces = ViewBag.Jueces as List<Juez> ?? new List<Juez>();
-    var estadisticas = ViewBag.Estadisticas as dynamic ?? new List<dynamic>();
+    var estadisticas = ViewBag.Estadisticas;
     var totalVotos = ViewBag.TotalVotos ?? 0;
     var totalEquipos = ViewBag.TotalEquipos ?? 0;
     var totalJueces = ViewBag.TotalJueces ?? 0;
@@ -137,7 +137,7 @@
             </div>
 
             <div class="ranking-list">
-                @if (estadisticas != null && ((IEnumerable<dynamic>)estadisticas).Any())
+                @if (estadisticas != null)
                 {
                     var position = 1;
                     foreach (var stat in estadisticas)
@@ -367,10 +367,17 @@
     .empty-state-large h3 { color: #2d3748; margin: 20px 0 12px; font-size: 24px; }
     .empty-state-large p { color: #718096; font-size: 16px; }
     
-    @media (max-width: 1024px) {
-        .content-grid { grid-template-columns: 1fr; }
-        .table-header, .table-row { grid-template-columns: 1fr; }
-        .stats-summary { flex-wrap: wrap; }
+    /* Media Queries */
+    @@media (max-width: 1024px) {
+        .content-grid { 
+            grid-template-columns: 1fr; 
+        }
+        .table-header, .table-row { 
+            grid-template-columns: 1fr; 
+        }
+        .stats-summary { 
+            flex-wrap: wrap; 
+        }
     }
 </style>
 

@@ -15,21 +15,15 @@ namespace ECOSApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Validar credenciales específicas
-                if (model.Username == "admin" && model.Password == "adminECOS")
+                // Por ahora, cualquier usuario/contraseña funcionará
+                if (!string.IsNullOrEmpty(model.Username) && !string.IsNullOrEmpty(model.Password))
                 {
                     HttpContext.Session.SetString("Username", model.Username);
-                    HttpContext.Session.SetString("IsAuthenticated", "true");
                     return RedirectToAction("Dashboard", "Home");
-                }
-                else
-                {
-                    ViewBag.Error = "Usuario o contraseña incorrectos. Use: admin / adminECOS";
-                    return View(model);
                 }
             }
             
-            ViewBag.Error = "Por favor complete todos los campos";
+            ViewBag.Error = "Usuario o contraseña incorrectos";
             return View(model);
         }
 

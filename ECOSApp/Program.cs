@@ -3,10 +3,8 @@ using ECOSApp.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Configurar SQLite
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -19,7 +17,6 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// Crear la base de datos si no existe
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -35,7 +32,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
