@@ -1,9 +1,16 @@
 @{
     ViewData["Title"] = "Dashboard - ECOS-VOTE";
+
+    // Extraer datos de ViewBag para mayor claridad
+    var totalEquipos = (int)ViewBag.TotalEquipos;
+    var totalJueces = (int)ViewBag.TotalJueces;
+    var totalVotos = (int)ViewBag.TotalVotos;
+    var participacion = (double)ViewBag.Participacion;
+    var username = Context.Session.GetString("Username") ?? "Administrador";
+    var userInitial = username.Substring(0, 1).ToUpper();
 }
 
 <div class="dashboard-container">
-    <!-- Header -->
     <header class="dashboard-header">
         <div class="header-content">
             <div class="header-left">
@@ -13,20 +20,19 @@
             <div class="header-right">
                 <div class="user-profile">
                     <div class="user-avatar">
-                        <span>AD</span>
+                        <span>@userInitial</span>
                     </div>
                     <div class="user-info">
-                        <strong>Administrador</strong>
-                        <small>admin@ecos.com</small>
+                        <strong>@username</strong>
+                        <small>@($"Usuario Logueado")</small>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Navigation Cards -->
     <div class="cards-container">
-        <div class="dashboard-card" onclick="window.location.href='/Equipos'">
+        <div class="dashboard-card" onclick="window.location.href='@Url.Action("Index", "Equipos")'">
             <div class="card-icon teams">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -39,7 +45,7 @@
                 <h3>Gestión de Equipos</h3>
                 <p>Registrar, editar y eliminar equipos participantes</p>
                 <div class="card-stats">
-                    <span class="stat-badge">12 Equipos</span>
+                    <span class="stat-badge">@totalEquipos Equipos</span>
                 </div>
             </div>
             <div class="card-arrow">
@@ -49,7 +55,7 @@
             </div>
         </div>
 
-        <div class="dashboard-card" onclick="window.location.href='/Jueces'">
+        <div class="dashboard-card" onclick="window.location.href='@Url.Action("Index", "Jueces")'">
             <div class="card-icon judges">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -61,7 +67,7 @@
                 <h3>Gestión de Jueces</h3>
                 <p>Administrar jueces y evaluadores del evento</p>
                 <div class="card-stats">
-                    <span class="stat-badge">8 Jueces</span>
+                    <span class="stat-badge">@totalJueces Jueces</span>
                 </div>
             </div>
             <div class="card-arrow">
@@ -71,7 +77,7 @@
             </div>
         </div>
 
-        <div class="dashboard-card" onclick="window.location.href='/Votaciones'">
+        <div class="dashboard-card" onclick="window.location.href='@Url.Action("Index", "Votaciones")'">
             <div class="card-icon votes">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 3v18h18"></path>
@@ -84,7 +90,7 @@
                 <h3>Visualización de Votaciones</h3>
                 <p>Ver resultados y estadísticas en tiempo real</p>
                 <div class="card-stats">
-                    <span class="stat-badge">45 Votos</span>
+                    <span class="stat-badge">@totalVotos Votos</span>
                 </div>
             </div>
             <div class="card-arrow">
@@ -95,7 +101,6 @@
         </div>
     </div>
 
-    <!-- Quick Stats -->
     <div class="stats-section">
         <h2>Estadísticas Generales</h2>
         <div class="stats-grid">
@@ -109,7 +114,7 @@
                     </svg>
                 </div>
                 <div class="stat-details">
-                    <span class="stat-value">12</span>
+                    <span class="stat-value">@totalEquipos</span>
                     <span class="stat-label">Equipos Registrados</span>
                 </div>
             </div>
@@ -123,7 +128,7 @@
                     </svg>
                 </div>
                 <div class="stat-details">
-                    <span class="stat-value">8</span>
+                    <span class="stat-value">@totalJueces</span>
                     <span class="stat-label">Jueces Activos</span>
                 </div>
             </div>
@@ -136,7 +141,7 @@
                     </svg>
                 </div>
                 <div class="stat-details">
-                    <span class="stat-value">45</span>
+                    <span class="stat-value">@totalVotos</span>
                     <span class="stat-label">Votos Emitidos</span>
                 </div>
             </div>
@@ -149,15 +154,46 @@
                     </svg>
                 </div>
                 <div class="stat-details">
-                    <span class="stat-value">56%</span>
+                    <span class="stat-value">@participacion.ToString("0.0")%</span>
                     <span class="stat-label">Participación</span>
                 </div>
             </div>
         </div>
     </div>
+    
+    <div class="top-teams-section">
+        <h2>🏆 Top 3 Equipos por Puntuación Promedio</h2>
+        <div class="top-teams-list">
+            @if (ViewBag.EquiposMejorVotados != null && ViewBag.EquiposMejorVotados.Count > 0)
+            {
+                int rank = 1;
+                foreach (var equipo in ViewBag.EquiposMejorVotados)
+                {
+                    <div class="team-rank-card rank-@rank">
+                        <span class="rank-number">#@rank</span>
+                        <div class="team-details">
+                            <strong>@equipo.EquipoNombre</strong>
+                            <small>@equipo.TotalVotos Votos</small>
+                        </div>
+                        <div class="team-score">
+                            <span class="score-value">@equipo.PromedioVotos.ToString("0.0")</span>
+                            <span class="score-label">Promedio</span>
+                        </div>
+                    </div>
+                    rank++;
+                }
+            }
+            else
+            {
+                <p class="no-data">Aún no hay suficientes votos para generar un Top 3.</p>
+            }
+        </div>
+    </div>
+
 </div>
 
 <style>
+    /* Estilos ya existentes... */
     body {
         margin: 0;
         padding: 0;
@@ -319,6 +355,7 @@
         background: white;
         border-radius: 16px;
         padding: 30px;
+        margin-bottom: 40px; /* Añadido para separar Top Teams */
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
@@ -386,4 +423,59 @@
         font-size: 13px;
         color: #718096;
     }
-</style>
+    
+    /* Nuevos estilos para Top Teams */
+    .top-teams-section {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .top-teams-section h2 {
+        margin: 0 0 24px 0;
+        color: #2d3748;
+        font-size: 24px;
+        font-weight: 600;
+    }
+    
+    .top-teams-list {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    
+    .team-rank-card {
+        flex: 1;
+        min-width: 250px;
+        max-width: 380px;
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+        background-color: #fcfcfc;
+    }
+    
+    .team-rank-card .rank-number {
+        font-size: 32px;
+        font-weight: 800;
+        margin-right: 15px;
+        padding-right: 15px;
+        border-right: 2px solid;
+        flex-shrink: 0;
+    }
+    
+    .team-rank-card.rank-1 .rank-number {
+        color: #ffd700; /* Gold */
+        border-color: #ffd700;
+    }
+    
+    .team-rank-card.rank-2 .rank-number {
+        color: #c0c0c0; /* Silver */
+        border-color: #c0c0c0;
+    }
+    
+    .team-rank-card.rank-3 .
