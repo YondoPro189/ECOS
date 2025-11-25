@@ -5,9 +5,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
+// Configurar DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Configurar Sesiones
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -15,8 +17,27 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+// Configurar CORS para permitir conexiones desde la app móvil
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowMobileApp", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
+// Agregar controladores de API
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null; // Mantener nombres originales
+    });
+
 var app = builder.Build();
 
+// Inicializar base de datos
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -41,11 +62,19 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+// Habilitar CORS
+app.UseCors("AllowMobileApp");
+
 app.UseSession();
 app.UseAuthorization();
 
+// Mapear rutas de controladores
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Mapear rutas de API
+app.MapControllers();
 
 app.Run();
