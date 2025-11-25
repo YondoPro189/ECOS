@@ -82,12 +82,14 @@ namespace ECOSApp.Mobile
                 }
                 else
                 {
-                    await DisplayAlert("Error", "No se encontraron jueces registrados", "OK");
+                    // FIX: Changed DisplayAlert to DisplayAlertAsync
+                    await DisplayAlertAsync("Error", "No se encontraron jueces registrados", "OK");
                 }
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Error", $"Error al cargar jueces: {ex.Message}", "OK");
+                // FIX: Changed DisplayAlert to DisplayAlertAsync
+                await DisplayAlertAsync("Error", $"Error al cargar jueces: {ex.Message}", "OK");
             }
             finally
             {
@@ -160,12 +162,14 @@ namespace ECOSApp.Mobile
         {
             if (_juezSeleccionado == null || _puntuacion == 0)
             {
-                await DisplayAlert("Datos Incompletos", "Por favor completa todos los campos", "OK");
+                // FIX: Changed DisplayAlert to DisplayAlertAsync
+                await DisplayAlertAsync("Datos Incompletos", "Por favor completa todos los campos", "OK");
                 return;
             }
 
             // Confirmar voto
-            bool confirmar = await DisplayAlert(
+            // FIX: Changed DisplayAlert to DisplayAlertAsync
+            bool confirmar = await DisplayAlertAsync(
                 "Confirmar Voto",
                 $"¿Confirmas tu voto de {_puntuacion} estrellas para {_nombreEquipo}?\n\nNo podrás modificarlo después.",
                 "Sí, Enviar",
@@ -185,7 +189,8 @@ namespace ECOSApp.Mobile
 
                 if (yaVoto)
                 {
-                    await DisplayAlert("Voto Duplicado", "Este juez ya votó por este equipo", "OK");
+                    // FIX: Changed DisplayAlert to DisplayAlertAsync
+                    await DisplayAlertAsync("Voto Duplicado", "Este juez ya votó por este equipo", "OK");
                     return;
                 }
 
@@ -201,7 +206,8 @@ namespace ECOSApp.Mobile
 
                 if (resultado.Success)
                 {
-                    await DisplayAlert(
+                    // FIX: Changed DisplayAlert to DisplayAlertAsync
+                    await DisplayAlertAsync(
                         "¡Voto Registrado! ✅",
                         $"Tu voto de {_puntuacion} estrellas ha sido registrado exitosamente.",
                         "OK"
@@ -212,13 +218,15 @@ namespace ECOSApp.Mobile
                 }
                 else
                 {
-                    await DisplayAlert("Error", resultado.Message, "OK");
+                    // FIX: Changed DisplayAlert to DisplayAlertAsync
+                    await DisplayAlertAsync("Error", resultado.Message, "OK");
                     BtnEnviarVoto.IsEnabled = true;
                 }
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Error", $"Error al enviar voto: {ex.Message}", "OK");
+                // FIX: Changed DisplayAlert to DisplayAlertAsync
+                await DisplayAlertAsync("Error", $"Error al enviar voto: {ex.Message}", "OK");
                 BtnEnviarVoto.IsEnabled = true;
             }
             finally

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ECOSApp.Mobile.EquipoDetallePage"
+             Title="Detalle del Equipo"
+             BackgroundColor="#F7FAFC">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+            
+            <!-- Header Card -->
+            <Border BackgroundColor="White" 
+                    StrokeShape="RoundRectangle 16" 
+                    StrokeThickness="0"
+                    Shadow="{x:StaticResource DefaultShadow}"
+                    Padding="20">
+                <VerticalStackLayout Spacing="15">
+                    <Label x:Name="NombreLabel" 
+                           FontSize="24" 
+                           FontAttributes="Bold"
+                           TextColor="#2D3748"
+                           HorizontalOptions="Center"/>
+                    
+                    <Label x:Name="DescripcionLabel"
+                           FontSize="16"
+                           TextColor="#718096"
+                           LineHeight="1.4"
+                           HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Stats Card -->
+            <Border BackgroundColor="White" 
+                    StrokeShape="RoundRectangle 16" 
+                    StrokeThickness="0"
+                    Shadow="{x:StaticResource DefaultShadow}"
+                    Padding="20">
+                <HorizontalStackLayout Spacing="40" HorizontalOptions="Center">
+                    <VerticalStackLayout Spacing="5">
+                        <Label x:Name="PromedioLabel" 
+                               FontSize="32" 
+                               FontAttributes="Bold"
+                               TextColor="#667EEA"
+                               HorizontalOptions="Center"/>
+                        <Label Text="Promedio" 
+                               FontSize="14" 
+                               TextColor="#718096"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                    
+                    <VerticalStackLayout Spacing="5">
+                        <Label x:Name="TotalVotosLabel" 
+                               FontSize="32" 
+                               FontAttributes="Bold"
+                               TextColor="#48BB78"
+                               HorizontalOptions="Center"/>
+                        <Label Text="Votos" 
+                               FontSize="14" 
+                               TextColor="#718096"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Botón de Votación -->
+            <Button x:Name="BtnVotar"
+                    Text="⭐ Votar por este Equipo"
+                    BackgroundColor="#667EEA"
+                    TextColor="White"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    CornerRadius="15"
+                    HeightRequest="60"
+                    Clicked="OnVotarClicked"/>
+
+            <ActivityIndicator x:Name="LoadingIndicator"
+                             IsRunning="False"
+                             IsVisible="False"
+                             Color="#667EEA"
+                             HeightRequest="50"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
