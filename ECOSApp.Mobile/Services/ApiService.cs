@@ -6,7 +6,9 @@ namespace ECOSApp.Mobile.Services
     public class ApiService
     {
         private readonly HttpClient _httpClient;
-        private const string BASE_URL = "https://tu-servidor.com/api"; // Cambia esto por tu URL
+        private const string BASE_URL = "http://192.168.1.1:5099/api";
+
+
 
         public ApiService()
         {
